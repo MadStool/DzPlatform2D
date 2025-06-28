@@ -1,93 +1,74 @@
-using System.Runtime.InteropServices;
-using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class PlayerMove : MonoBehaviour
 {
-    private const string AnimParamMoveSpeed = "HorizontalMove";
-    private const string AnimParamIsJumping = "isJumping";
-    private const string InputAxisHorizontal = "Horizontal";
+    [Header("Movement")]
+    [SerializeField] private float _moveSpeed = 5f;
+    [SerializeField] private float _jumpForce = 10f;
+    [SerializeField] private LayerMask _groundLayer;
 
-    private Rigidbody2D _rigidbody;
-    private float _horizontalMove = 0f;
-    private bool _facingRight = true;
+    [Header("References")]
+    [SerializeField] private Transform _groundCheck;
+    [SerializeField] private float _checkRadius = 0.2f;
 
-    [Header("Player Move Settings")]
-    [Range(0, 10)] public float speed = 1f;
-    [Range(0, 15f)] public float jumpForce = 8f;
+    private Rigidbody2D _rb;
+    private Animator _anim;
+    private bool _isFacingRight = true;
+    private bool _isGrounded;
 
-    [Header("Player Anim. Settings")]
-    public Animator animator;
-
-    [Header("Ground Cheker Settings")]
-    public bool isGrounded = false;
-    [Range(-5, 5f)] public float checkGroundOffsetY = -1.8f;
-    [Range(0, 5f)] public float checkGroundRadius = 0.3f;
-
-    private void Start()
+    private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
+        _rb = GetComponent<Rigidbody2D>();
+        _anim = GetComponent<Animator>();
     }
 
     private void Update()
     {
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
-        {
-            _rigidbody.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
-        }
-
-        _horizontalMove = Input.GetAxisRaw(InputAxisHorizontal) * speed;
-
-        animator.SetFloat(AnimParamMoveSpeed, Mathf.Abs(_horizontalMove));
-
-        if(isGrounded == false)
-        {
-            animator.SetBool(AnimParamIsJumping, true);
-        }
-        else
-        {
-            animator.SetBool(AnimParamIsJumping, false);
-        }
-
-        if(_horizontalMove < 0 && _facingRight)
-        {
-            Flip();
-        }
-        else if(_horizontalMove > 0 && _facingRight == false)
-        {
-            Flip();
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        Vector2 targetVelocity = new Vector2(_horizontalMove * 10f, _rigidbody.linearVelocity.y);
-        _rigidbody.linearVelocity = targetVelocity;
-
         CheckGround();
-    }
-
-    private void Flip()
-    {
-        _facingRight = _facingRight == false;
-
-        Vector3 theScale = transform.localScale;
-        theScale.x *= -1;
-        transform.localScale = theScale;
+        HandleMovement();
+        HandleJump();
+        UpdateAnimations();
     }
 
     private void CheckGround()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(
-            new Vector2(transform.position.x, transform.position.y + checkGroundOffsetY), checkGroundRadius);
+        _isGrounded = Physics2D.OverlapCircle(_groundCheck.position, _checkRadius, _groundLayer);
+    }
 
-        if(colliders.Length > 1)
+    private void HandleMovement()
+    {
+        float moveInput = Input.GetAxis("Horizontal");
+        Vector2 currentVelocity = _rb.linearVelocity;
+        _rb.linearVelocity = new Vector2(moveInput * _moveSpeed, currentVelocity.y);
+
+        if (moveInput > 0 && _isFacingRight == false)
+            Flip();
+        else if (moveInput < 0 && _isFacingRight)
+            Flip();
+    }
+
+    private void HandleJump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && _isGrounded)
         {
-            isGrounded = true;
+            _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
         }
-        else
-        {
-            isGrounded = false;
-        }
+    }
+
+    private void UpdateAnimations()
+    {
+        float moveInput = Input.GetAxis("Horizontal");
+        _anim.SetBool("isRunning", Mathf.Abs(moveInput) > 0.1f);
+        _anim.SetBool("isGrounded", _isGrounded);
+        _anim.SetFloat("verticalVelocity", _rb.linearVelocity.y);
+    }
+
+    private void Flip()
+    {
+        _isFacingRight = !_isFacingRight;
+        Vector3 scale = transform.localScale;
+        scale.x *= -1;
+        transform.localScale = scale;
     }
 }
