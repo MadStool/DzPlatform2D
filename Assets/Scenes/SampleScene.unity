@@ -902,8 +902,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c16dd524c9d49d4aa9531ac6bcafb07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkGroundOffsetY: -2.01
-  checkGroundRadius: 1.03
+  checkGroundOffsetY: -0.92
+  checkGroundRadius: 0.21
 --- !u!114 &1104241941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1000,6 +1000,7 @@ GameObject:
   - component: {fileID: 1555437540}
   - component: {fileID: 1555437539}
   - component: {fileID: 1555437538}
+  - component: {fileID: 1555437543}
   m_Layer: 0
   m_Name: Platform
   m_TagString: Untagged
@@ -2521,6 +2522,18 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &1555437543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1555437536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab9f976d67982b4796f5a173f7d5d35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1599227435
 GameObject:
   m_ObjectHideFlags: 0

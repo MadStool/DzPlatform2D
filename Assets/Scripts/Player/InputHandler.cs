@@ -6,11 +6,15 @@ public class InputHandler : MonoBehaviour
     private const KeyCode JumpKey = KeyCode.Space;
 
     public float HorizontalInput { get; private set; }
-    public bool JumpTriggered { get; private set; }
+    public event System.Action OnJumpPressed;
 
     private void Update()
     {
         HorizontalInput = Input.GetAxisRaw(HorizontalAxis);
-        JumpTriggered = Input.GetKeyDown(JumpKey);
+
+        if (Input.GetKeyDown(JumpKey))
+        {
+            OnJumpPressed?.Invoke();
+        }
     }
 }

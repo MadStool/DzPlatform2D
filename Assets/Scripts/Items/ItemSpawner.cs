@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class ItemSpawner : MonoBehaviour
 {
@@ -8,49 +9,68 @@ public class ItemSpawner : MonoBehaviour
     [SerializeField] private Transform[] _spawnPoints;
 
     private bool _isActive = true;
-
     private readonly List<Item> _activeItems = new List<Item>();
     private readonly Queue<Vector2> _positionsToRespawn = new Queue<Vector2>();
+    private Coroutine _respawnCoroutine;
 
     private void Start()
     {
+        if (ValidateSetup())
+            SpawnAllItems();
+    }
+
+    private bool ValidateSetup()
+    {
         if (_itemPrefab == null)
         {
-            Debug.LogError("Item prefab is not assigned in the inspector!", this);
-            return;
+            Debug.LogError("Item prefab is not assigned!", this);
+            return false;
         }
 
-        SpawnAllItems();
+        if (_spawnPoints == null || _spawnPoints.Length == 0)
+        {
+            Debug.LogError("No spawn points assigned!", this);
+            return false;
+        }
+
+        return true;
     }
 
     public void ReportItemCollected(Vector2 spawnPosition)
     {
-        if (_isActive == false) 
+        if (_isActive == false)
              return;
 
         _positionsToRespawn.Enqueue(spawnPosition);
 
-        if (_positionsToRespawn.Count == 1)
+        if (_respawnCoroutine == null)
+            _respawnCoroutine = StartCoroutine(RespawnProcess());
+    }
+
+    private IEnumerator RespawnProcess()
+    {
+        while (_isActive && _positionsToRespawn.Count > 0)
         {
-            Invoke(nameof(RespawnNextPosition), _respawnTime);
+            yield return new WaitForSeconds(_respawnTime);
+
+            if (_isActive == false)
+                yield break;
+
+            SpawnItemAtPoint(_positionsToRespawn.Dequeue());
         }
+
+        _respawnCoroutine = null;
     }
 
     private void SpawnAllItems()
     {
         ClearAllItems();
 
-        if (_spawnPoints == null || _spawnPoints.Length == 0)
-        {
-            Debug.LogWarning("No spawn points assigned!", this);
-            return;
-        }
-
         foreach (var point in _spawnPoints)
         {
             if (point == null)
             {
-                Debug.LogWarning("One of spawn points is null!", this);
+                Debug.LogWarning("Spawn point is null!", this);
                 continue;
             }
 
@@ -58,36 +78,14 @@ public class ItemSpawner : MonoBehaviour
         }
     }
 
-    private void RespawnNextPosition()
-    {
-        if (_positionsToRespawn.Count == 0)
-            return;
-
-        var position = _positionsToRespawn.Dequeue();
-        SpawnItemAtPoint(position);
-
-        if (_positionsToRespawn.Count > 0)
-        {
-            Invoke(nameof(RespawnNextPosition), _respawnTime);
-        }
-    }
-
     private void SpawnItemAtPoint(Vector2 position)
     {
-        if (_itemPrefab == null)
-        {
-            Debug.LogError("Cannot spawn item - prefab is null!", this);
-            return;
-        }
-
         Item newItem = Instantiate(_itemPrefab, position, Quaternion.identity);
         _activeItems.Add(newItem);
 
-        ItemEventBridge bridge = newItem.GetComponent<ItemEventBridge>();
-
-        if (bridge == null)
+        if (newItem.TryGetComponent(out ItemEventBridge bridge) == false)
         {
-            Debug.LogWarning($"Item prefab {_itemPrefab.name} is missing ItemEventBridge component!", this);
+            Debug.LogWarning($"Item prefab {_itemPrefab.name} is missing ItemEventBridge!", this);
             return;
         }
 
@@ -97,10 +95,8 @@ public class ItemSpawner : MonoBehaviour
     private void ClearAllItems()
     {
         foreach (var item in _activeItems)
-        {
             if (item != null)
                 Destroy(item.gameObject);
-        }
 
         _activeItems.Clear();
     }
@@ -108,6 +104,8 @@ public class ItemSpawner : MonoBehaviour
     private void OnDestroy()
     {
         _isActive = false;
-        CancelInvoke();
+
+        if (_respawnCoroutine != null)
+            StopCoroutine(_respawnCoroutine);
     }
 }

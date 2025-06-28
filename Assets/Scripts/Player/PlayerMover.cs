@@ -38,9 +38,6 @@ public class PlayerMover : MonoBehaviour
     private void Flip()
     {
         _facingRight = _facingRight == false;
-
-        var scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
+        transform.Rotate(0f, 180f, 0f);
     }
 }

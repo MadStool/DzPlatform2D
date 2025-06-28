@@ -14,11 +14,21 @@ public class PlayerJumper : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _inputHandler = GetComponent<InputHandler>();
         _groundDetector = GetComponent<GroundDetector>();
+
+        _inputHandler.OnJumpPressed += HandleJump;
     }
 
-    private void Update()
+    private void OnDestroy()
     {
-        if (_groundDetector.IsGrounded && _inputHandler.JumpTriggered)
+        if (_inputHandler != null)
+        {
+            _inputHandler.OnJumpPressed -= HandleJump;
+        }
+    }
+
+    private void HandleJump()
+    {
+        if (_groundDetector.IsGrounded)
         {
             _rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }

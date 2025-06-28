@@ -15,11 +15,25 @@ public class PlayerAnimator : MonoBehaviour
         _animator = GetComponent<Animator>();
         _inputHandler = GetComponent<InputHandler>();
         _groundDetector = GetComponent<GroundDetector>();
+
+        _groundDetector.OnGroundedChanged += HandleGroundedChanged;
+    }
+
+    private void OnDestroy()
+    {
+        if (_groundDetector != null)
+        {
+            _groundDetector.OnGroundedChanged -= HandleGroundedChanged;
+        }
     }
 
     private void Update()
     {
         _animator.SetFloat(HorizontalMoveParam, Mathf.Abs(_inputHandler.HorizontalInput));
-        _animator.SetBool(IsJumpingParam, _groundDetector.IsGrounded == false);
+    }
+
+    private void HandleGroundedChanged(bool isGrounded)
+    {
+        _animator.SetBool(IsJumpingParam, isGrounded == false);
     }
 }
