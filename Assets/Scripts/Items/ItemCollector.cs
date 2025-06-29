@@ -7,7 +7,6 @@ public class ItemCollector : MonoBehaviour
     {
         if (other.TryGetComponent<Item>(out Item item))
         {
-            Debug.Log($"Item collected: {other.name}");
             Destroy(item.gameObject);
         }
     }

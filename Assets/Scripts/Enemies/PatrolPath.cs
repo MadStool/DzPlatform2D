@@ -12,6 +12,7 @@ public class PatrolPath : MonoBehaviour
     private float _waitTimer;
     private bool _isWaiting;
 
+    public Transform[] Points => _points;
     public Vector3 CurrentPoint => _points[_currentIndex].position;
     public bool IsWaiting => _isWaiting;
 
@@ -26,10 +27,7 @@ public class PatrolPath : MonoBehaviour
         if (_isWaiting)
         {
             _waitTimer -= Time.deltaTime;
-
-            if (_waitTimer <= 0)
-                _isWaiting = false;
-
+            if (_waitTimer <= 0) _isWaiting = false;
             return Vector3.zero;
         }
 
