@@ -27,7 +27,10 @@ public class PatrolPath : MonoBehaviour
         if (_isWaiting)
         {
             _waitTimer -= Time.deltaTime;
-            if (_waitTimer <= 0) _isWaiting = false;
+
+            if (_waitTimer <= 0) 
+                _isWaiting = false;
+
             return Vector3.zero;
         }
 

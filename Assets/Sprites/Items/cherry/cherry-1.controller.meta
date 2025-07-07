@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 67c716b1f11d3dc489685ec26ea36bd9
+guid: 7f79d1aa08490e94bbaaea67098732b1
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 9100000
@@ -11,5 +11,5 @@ AssetOrigin:
   productId: 103349
   packageName: Sunny Land
   packageVersion: 1.1
-  assetPath: Assets/Sprites/Enemies/Dog/dog1.controller
+  assetPath: Assets/Sprites/Items/cherry/cherry-1.controller
   uploadId: 540939

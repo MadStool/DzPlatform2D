@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f5ca4f073737f284999dc49d752cc67d
+guid: 63587be96931747449986dd46c5bf247
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 7400000
@@ -11,5 +11,5 @@ AssetOrigin:
   productId: 103349
   packageName: Sunny Land
   packageVersion: 1.1
-  assetPath: Assets/Sprites/Enemies/Dog-idle/Dog-Idle-Animation.anim
+  assetPath: Assets/Sprites/Items/cherry/Cherry-Animation.anim
   uploadId: 540939
