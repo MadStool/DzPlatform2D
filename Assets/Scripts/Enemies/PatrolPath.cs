@@ -3,7 +3,7 @@ using UnityEngine;
 public class PatrolPath : MonoBehaviour
 {
     private const int NextPointIncrement = 1;
-    private const float ReachThreshold = 0.1f;
+    private const float ReachThresholdSqr = 0.01f;
 
     [SerializeField] private Transform[] _points;
     [SerializeField] private float _waitTime = 1f;
@@ -12,38 +12,32 @@ public class PatrolPath : MonoBehaviour
     private float _waitTimer;
     private bool _isWaiting;
 
-    public Transform[] Points => _points;
-    public Vector3 CurrentPoint => _points[_currentIndex].position;
     public bool IsWaiting => _isWaiting;
+    public Vector3 CurrentPoint => _points[_currentIndex].position;
 
-    public void Initialize(Transform entity)
-    {
-        if (_points.Length > 0)
-            entity.position = _points[0].position;
-    }
-
-    public Vector3 UpdatePath(Transform entity, float moveSpeed)
+    public Vector3 UpdatePath(Transform entity, float speed)
     {
         if (_isWaiting)
         {
             _waitTimer -= Time.deltaTime;
 
-            if (_waitTimer <= 0) 
+            if (_waitTimer <= 0)
                 _isWaiting = false;
 
             return Vector3.zero;
         }
 
-        Vector3 direction = (CurrentPoint - entity.position).normalized;
-        entity.position = Vector3.MoveTowards(entity.position, CurrentPoint, moveSpeed * Time.deltaTime);
+        Vector3 toTarget = CurrentPoint - entity.position;
+        Vector3 horizontalMove = new Vector3(toTarget.x, 0, 0).normalized;
+        entity.position += horizontalMove * speed * Time.deltaTime;
 
-        if (Vector3.Distance(entity.position, CurrentPoint) < ReachThreshold)
+        if (new Vector3(toTarget.x, 0, 0).sqrMagnitude <= ReachThresholdSqr)
         {
             _isWaiting = true;
             _waitTimer = _waitTime;
             _currentIndex = (_currentIndex + NextPointIncrement) % _points.Length;
         }
 
-        return direction;
+        return horizontalMove;
     }
 }

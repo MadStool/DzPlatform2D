@@ -1,36 +1,22 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Animator), typeof(SpriteRenderer))]
 public class CharacterAnimator : MonoBehaviour
 {
-    private const string MoveParam = "IsMoving";
+    private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
 
-    [SerializeField] private Animator _animator;
-    [SerializeField] private bool _flipSprite = true;
-
-    private SpriteRenderer _spriteRenderer;
+    private Animator _animator;
 
     private void Awake()
     {
-        if (_animator == null)
-        {
-            _animator = GetComponent<Animator>();
-        }
-
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        Debug.Assert(_spriteRenderer != null, "SpriteRenderer is missing!");
+        _animator = GetComponent<Animator>();
     }
 
-    public void UpdateAnimation(Vector3 moveDirection, bool isMoving)
+    public void UpdateAnimation(Vector2 moveDirection, bool isMoving)
     {
-        if (_animator == null || _spriteRenderer == null)
+        if (_animator == null)
             return;
 
-        _animator.SetBool(MoveParam, isMoving);
-
-        if (_flipSprite && moveDirection.x != 0)
-        {
-            _spriteRenderer.flipX = moveDirection.x > 0;
-        }
+        _animator.SetBool(IsMovingHash, isMoving);
     }
 }

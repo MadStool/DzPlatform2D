@@ -3,37 +3,23 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class PlayerAnimator : MonoBehaviour
 {
-    private const string HorizontalMoveParam = "HorizontalMove";
-    private const string IsJumpingParam = "isJumping";
+    private static readonly int SpeedHash = Animator.StringToHash("HorizontalMove");
+    private static readonly int IsJumpingHash = Animator.StringToHash("isJumping");
 
     private Animator _animator;
-    private InputHandler _inputHandler;
-    private GroundDetector _groundDetector;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
-        _inputHandler = GetComponent<InputHandler>();
-        _groundDetector = GetComponent<GroundDetector>();
-
-        _groundDetector.OnGroundedChanged += HandleGroundedChanged;
     }
 
-    private void OnDestroy()
+    public void SetMovementSpeed(float speed)
     {
-        if (_groundDetector != null)
-        {
-            _groundDetector.OnGroundedChanged -= HandleGroundedChanged;
-        }
+        _animator.SetFloat(SpeedHash, Mathf.Abs(speed));
     }
 
-    private void Update()
+    public void SetGrounded(bool isGrounded)
     {
-        _animator.SetFloat(HorizontalMoveParam, Mathf.Abs(_inputHandler.HorizontalInput));
-    }
-
-    private void HandleGroundedChanged(bool isGrounded)
-    {
-        _animator.SetBool(IsJumpingParam, isGrounded == false);
+        _animator.SetBool(IsJumpingHash, isGrounded);
     }
 }

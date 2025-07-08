@@ -7,7 +7,7 @@ public class HealthItem : Item
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent(out PlayerHealth playerHealth))
+        if (other.TryGetComponent(out Health playerHealth))
         {
             playerHealth.Heal(_healAmount);
 

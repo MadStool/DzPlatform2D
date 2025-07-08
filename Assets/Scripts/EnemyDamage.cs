@@ -14,7 +14,7 @@ public class EnemyDamage : MonoBehaviour
             return;
         }
 
-        PlayerHealth playerHealth = collision.collider.GetComponent<PlayerHealth>();
+        Health playerHealth = collision.collider.GetComponent<Health>();
 
         if (playerHealth != null)
         {

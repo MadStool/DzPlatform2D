@@ -8,12 +8,14 @@ public class PlayerMover : MonoBehaviour
 
     private Rigidbody2D _rigidbody;
     private InputHandler _inputHandler;
+    private PlayerAnimator _animator;
     private bool _facingRight = true;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _inputHandler = GetComponent<InputHandler>();
+        _animator = GetComponent<PlayerAnimator>();
     }
 
     private void FixedUpdate()
@@ -21,8 +23,11 @@ public class PlayerMover : MonoBehaviour
         if (_movementEnabled == false)
             return;
 
-        var targetVelocity = new Vector2(_inputHandler.HorizontalInput * speed * 10f, _rigidbody.linearVelocity.y);
+        float moveInput = _inputHandler.HorizontalInput;
+        var targetVelocity = new Vector2(moveInput * speed * 10f, _rigidbody.linearVelocity.y);
         _rigidbody.linearVelocity = targetVelocity;
+
+        _animator.SetMovementSpeed(moveInput);
 
         HandleFlip();
     }
