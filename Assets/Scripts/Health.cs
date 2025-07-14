@@ -1,10 +1,16 @@
 using UnityEngine;
+using System;
 
 public class Health : MonoBehaviour
 {
     [SerializeField] private int _maxHealth = 100;
     private int _currentHealth;
     private IDamageHandler[] _damageHandlers;
+
+    public event Action<int, int> OnHealthChanged;
+
+    public int CurrentHealth => _currentHealth;
+    public int MaxHealth => _maxHealth;
 
     private void Awake()
     {
@@ -21,6 +27,8 @@ public class Health : MonoBehaviour
             handler.HandleDamage(damage, damageSource);
         }
 
+        OnHealthChanged?.Invoke(_currentHealth, _maxHealth);
+
         if (_currentHealth <= 0)
         {
             Die();
@@ -30,7 +38,9 @@ public class Health : MonoBehaviour
     public void Heal(int amount)
     {
         _currentHealth = Mathf.Min(_maxHealth, _currentHealth + amount);
-        Debug.Log($"Player healed by {amount}. Health: {_currentHealth}/{_maxHealth}");
+        //Debug.Log($"Player healed by {amount}. Health: {_currentHealth}/{_maxHealth}");
+
+        OnHealthChanged?.Invoke(_currentHealth, _maxHealth);
     }
 
     private void Die()
