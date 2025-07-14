@@ -4,32 +4,32 @@ using System;
 public class Health : MonoBehaviour
 {
     [SerializeField] private int _maxHealth = 100;
-    private int _currentHealth;
     private IDamageHandler[] _damageHandlers;
 
     public event Action<int, int> OnHealthChanged;
 
-    public int CurrentHealth => _currentHealth;
-    public int MaxHealth => _maxHealth;
+    public int CurrentHealth { get; private set; }
+    public int MaxHealth { get; private set; }
 
     private void Awake()
     {
-        _currentHealth = _maxHealth;
+        MaxHealth = _maxHealth;
+        CurrentHealth = MaxHealth;
         _damageHandlers = GetComponents<IDamageHandler>();
     }
 
     public void TakeDamage(int damage, Transform damageSource)
     {
-        _currentHealth = Mathf.Max(0, _currentHealth - damage);
+        CurrentHealth = Mathf.Max(0, CurrentHealth - damage);
 
         foreach (var handler in _damageHandlers)
         {
             handler.HandleDamage(damage, damageSource);
         }
 
-        OnHealthChanged?.Invoke(_currentHealth, _maxHealth);
+        OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
 
-        if (_currentHealth <= 0)
+        if (CurrentHealth <= 0)
         {
             Die();
         }
@@ -37,10 +37,10 @@ public class Health : MonoBehaviour
 
     public void Heal(int amount)
     {
-        _currentHealth = Mathf.Min(_maxHealth, _currentHealth + amount);
+        CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
         //Debug.Log($"Player healed by {amount}. Health: {_currentHealth}/{_maxHealth}");
 
-        OnHealthChanged?.Invoke(_currentHealth, _maxHealth);
+        OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
     }
 
     private void Die()

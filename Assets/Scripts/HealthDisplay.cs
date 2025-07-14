@@ -6,47 +6,47 @@ using TMPro;
 public class HealthDisplay : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Health health;
-    [SerializeField] private TMP_Text healthText;
-    [SerializeField] private Slider healthBar;
-    [SerializeField] private Slider smoothHealthBar;
+    [SerializeField] private Health _health;
+    [SerializeField] private TMP_Text _healthText;
+    [SerializeField] private Slider _healthBar;
+    [SerializeField] private Slider _smoothHealthBar;
 
     [Header("Smooth Bar Settings")]
     [SerializeField] private float smoothSpeed = 1f;
 
     private void Awake()
     {
-        if (health == null)
-            health = GetComponent<Health>();
+        if (_health == null)
+            _health = GetComponent<Health>();
 
-        healthBar.maxValue = health.MaxHealth;
-        smoothHealthBar.maxValue = health.MaxHealth;
+        _healthBar.maxValue = _health.MaxHealth;
+        _smoothHealthBar.maxValue = _health.MaxHealth;
     }
 
     private void Start()
     {
-        UpdateHealthDisplay(health.CurrentHealth, health.MaxHealth);
-        smoothHealthBar.value = health.CurrentHealth;
+        UpdateHealthDisplay(_health.CurrentHealth, _health.MaxHealth);
+        _smoothHealthBar.value = _health.CurrentHealth;
     }
 
     private void OnEnable()
     {
-        health.OnHealthChanged += UpdateHealthDisplay;
+        _health.OnHealthChanged += UpdateHealthDisplay;
     }
 
     private void OnDisable()
     {
-        health.OnHealthChanged -= UpdateHealthDisplay;
+        _health.OnHealthChanged -= UpdateHealthDisplay;
     }
 
     private void Update()
     {
-        if (smoothHealthBar.value != healthBar.value)
+        if (Mathf.Approximately(_smoothHealthBar.value, _healthBar.value) == false)
         {
-            float maxHealthDelta = health.MaxHealth * smoothSpeed * Time.deltaTime;
-            smoothHealthBar.value = Mathf.MoveTowards(
-                smoothHealthBar.value,
-                healthBar.value,
+            float maxHealthDelta = _health.MaxHealth * smoothSpeed * Time.deltaTime;
+            _smoothHealthBar.value = Mathf.MoveTowards(
+                _smoothHealthBar.value,
+                _healthBar.value,
                 maxHealthDelta
             );
         }
@@ -54,13 +54,13 @@ public class HealthDisplay : MonoBehaviour
 
     private void UpdateHealthDisplay(int currentHealth, int maxHealth)
     {
-        if (healthText != null)
-            healthText.text = $"{currentHealth}/{maxHealth}";
+        if (_healthText != null)
+            _healthText.text = $"{currentHealth}/{maxHealth}";
 
-        if (healthBar != null)
+        if (_healthBar != null)
         {
-            healthBar.maxValue = maxHealth;
-            healthBar.value = currentHealth;
+            _healthBar.maxValue = maxHealth;
+            _healthBar.value = currentHealth;
         }
     }
 }

@@ -1915,9 +1915,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb5d399c68feab047946334221db40aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: {fileID: 1624975627}
-  damageAmount: 30
-  healAmount: 5
+  _health: {fileID: 1624975627}
+  _damageAmount: 30
+  _healAmount: 30
 --- !u!114 &1151548915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4753,10 +4753,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d3af35c32826434caa6e85610ab6c7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: {fileID: 1624975627}
-  healthText: {fileID: 133176116}
-  healthBar: {fileID: 449534872}
-  smoothHealthBar: {fileID: 908339620}
+  _health: {fileID: 1624975627}
+  _healthText: {fileID: 133176116}
+  _healthBar: {fileID: 449534872}
+  _smoothHealthBar: {fileID: 908339620}
   smoothSpeed: 1
 --- !u!1 &1651261458
 GameObject:
@@ -5422,9 +5422,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb5d399c68feab047946334221db40aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: {fileID: 1624975627}
-  damageAmount: 10
-  healAmount: 30
+  _health: {fileID: 1624975627}
+  _damageAmount: 30
+  _healAmount: 30
 --- !u!114 &1858371389
 MonoBehaviour:
   m_ObjectHideFlags: 0
