@@ -11,7 +11,7 @@ public class PlayerFootStomp : MonoBehaviour
         _playerRigidbody = GetComponentInParent<Rigidbody2D>();
     }
 
-    public void BounceAfterStomp()
+    public void BounceAfterStomp(float force)
     {
         _playerRigidbody.linearVelocity = new Vector2(_playerRigidbody.linearVelocity.x, _bounceForce);
     }

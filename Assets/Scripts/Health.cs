@@ -38,7 +38,6 @@ public class Health : MonoBehaviour
     public void Heal(int amount)
     {
         CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
-        //Debug.Log($"Player healed by {amount}. Health: {_currentHealth}/{_maxHealth}");
 
         OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
     }
@@ -46,10 +45,10 @@ public class Health : MonoBehaviour
     private void Die()
     {
         foreach (var handler in _damageHandlers)
-        {
             handler.HandleDeath();
-        }
 
-        Debug.Log("Player died!");
+        Debug.Log(gameObject.name + " died!");
+
+        Destroy(gameObject);
     }
 }

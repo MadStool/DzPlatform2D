@@ -1,24 +1,29 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(Health))]
 public class EnemyStomp : MonoBehaviour
 {
-    [SerializeField] private Collider2D stompCollider;
+    [Header("Stomp Settings")]
+    [SerializeField] private Collider2D _stompCollider;
+    [SerializeField] private int _stompDamage = 20;
+    [SerializeField] private float _bounceForce = 8f;
+
+    private Health _health;
+
+    private void Awake()
+    {
+        _health = GetComponent<Health>();
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-
         PlayerFootStomp foot = collision.collider.GetComponent<PlayerFootStomp>();
 
-        if (foot != null && collision.otherCollider == stompCollider)
+        if (foot != null && collision.otherCollider == _stompCollider)
         {
-            KillEnemy();
-            foot.BounceAfterStomp();
-        }
-    }
+            _health.TakeDamage(_stompDamage, collision.transform);
 
-    private void KillEnemy()
-    {
-        Destroy(gameObject);
+            foot.BounceAfterStomp(_bounceForce);
+        }
     }
 }
