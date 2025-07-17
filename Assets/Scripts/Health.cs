@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using static Unity.VisualScripting.Member;
 
 public class Health : MonoBehaviour
 {
@@ -20,7 +21,10 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(int damage, Transform damageSource)
     {
+        Debug.Log($"Taking {damage} damage from {damageSource.name}");
+
         CurrentHealth = Mathf.Max(0, CurrentHealth - damage);
+        Debug.Log($"New health: {CurrentHealth}");
 
         foreach (var handler in _damageHandlers)
         {
@@ -33,6 +37,8 @@ public class Health : MonoBehaviour
         {
             Die();
         }
+
+        Debug.Log($"{name} taking {damage} damage from {damageSource.name}");
     }
 
     public void Heal(int amount)
