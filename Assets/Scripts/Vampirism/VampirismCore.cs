@@ -6,10 +6,12 @@ public class VampirismCore : MonoBehaviour
     [Header("Ability Settings")]
     [SerializeField] private float _abilityRadius = 5f;
     [SerializeField] private float _healthStealPerSecond = 15f;
+    [SerializeField] private float _maxStealPerFrame = 2f;
 
     private Transform _nearestEnemy;
     private Health _playerHealth;
     private float _damageAccumulator;
+    private float _radiusSqr;
 
     public float AbilityRadius => _abilityRadius;
     public Transform NearestEnemy => _nearestEnemy;
@@ -17,27 +19,29 @@ public class VampirismCore : MonoBehaviour
     private void Awake()
     {
         _playerHealth = GetComponent<Health>();
+        _radiusSqr = _abilityRadius * _abilityRadius;
     }
 
     public void FindNearestEnemy()
     {
         _nearestEnemy = null;
-        float closestDistance = float.MaxValue;
+        float closestDistanceSqr = float.MaxValue;
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, _abilityRadius);
 
         foreach (var hit in hits)
         {
-            if (hit.isTrigger || hit.gameObject == gameObject) 
+            if (hit.isTrigger || hit.gameObject == gameObject)
                 continue;
 
             if (hit.TryGetComponent(out Enemy _))
             {
-                float distance = Vector2.Distance(transform.position, hit.transform.position);
+                Vector2 direction = hit.transform.position - transform.position;
+                float distanceSqr = direction.sqrMagnitude;
 
-                if (distance < closestDistance)
+                if (distanceSqr < closestDistanceSqr && distanceSqr <= _radiusSqr)
                 {
-                    closestDistance = distance;
+                    closestDistanceSqr = distanceSqr;
                     _nearestEnemy = hit.transform;
                 }
             }
@@ -46,15 +50,13 @@ public class VampirismCore : MonoBehaviour
 
     public void StealHealth()
     {
-        if (_nearestEnemy == null) 
+        if (_nearestEnemy == null)
             return;
 
         if (_nearestEnemy.TryGetComponent(out Health enemyHealth))
         {
             _damageAccumulator += _healthStealPerSecond * Time.deltaTime;
-
-            float maxStealPerFrame = 2f;
-            float healthToSteal = Mathf.Min(_damageAccumulator, maxStealPerFrame);
+            float healthToSteal = Mathf.Min(_damageAccumulator, _maxStealPerFrame);
 
             if (healthToSteal >= 1f && enemyHealth.CurrentHealth > 0)
             {
